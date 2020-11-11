@@ -331,7 +331,7 @@ static int common_ping_main(sa_family_t af, char **argv)
 	alarm(5); /* give the host 5000ms to respond */
 
 	create_icmp_socket(lsa);
-	G.myid = (uint16_t) getpid();
+	G.myid = (opt & OPT_X) ? htons(xatou16(str_x)) : (uint16_t) getpid();
 #if ENABLE_PING6
 	if (lsa->u.sa.sa_family == AF_INET6)
 		ping6(lsa);
@@ -351,7 +351,7 @@ static int common_ping_main(sa_family_t af, char **argv)
 /* Full(er) version */
 
 /* -c NUM, -t NUM, -w NUM, -W NUM */
-#define OPT_STRING "qvAc:+s:t:+w:+W:+I:np:i:4"IF_PING6("6")
+#define OPT_STRING "qvAc:+s:t:+w:+W:+I:np:i:4"IF_PING6("6")"x:"
 enum {
 	OPT_QUIET = 1 << 0,
 	OPT_VERBOSE = 1 << 1,
@@ -367,6 +367,7 @@ enum {
 	OPT_i = 1 << 11,
 	OPT_IPV4 = 1 << 12,
 	OPT_IPV6 = (1 << 13) * ENABLE_PING6,
+	OPT_X = (1 << 14),
 };
 
 
@@ -893,7 +894,7 @@ static void ping(len_and_sockaddr *lsa)
 static int common_ping_main(int opt, char **argv)
 {
 	len_and_sockaddr *lsa;
-	char *str_s, *str_p;
+	char *str_s, *str_p, *str_x;
 	char *str_i = (char*)"1";
 	duration_t interval;
 
@@ -903,7 +904,7 @@ static int common_ping_main(int opt, char **argv)
 			OPT_STRING
 			/* exactly one arg; -v and -q don't mix */
 			"\0" "=1:q--v:v--q",
-			&pingcount, &str_s, &opt_ttl, &G.deadline_us, &timeout, &str_I, &str_p, &str_i
+			&pingcount, &str_s, &opt_ttl, &G.deadline_us, &timeout, &str_I, &str_p, &str_i, &str_x
 	);
 	if (opt & OPT_s)
 		datalen = xatou16(str_s); // -s
@@ -926,7 +927,7 @@ static int common_ping_main(int opt, char **argv)
 		interval = INT_MAX/1000000;
 	G.interval_us = interval * 1000000;
 
-	myid = (uint16_t) getpid();
+	myid = (opt & OPT_X) ? htons(xatou16(str_x)) : (uint16_t) getpid();
 	hostname = argv[optind];
 #if ENABLE_PING6
 	{
