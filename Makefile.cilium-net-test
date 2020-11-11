@@ -1,0 +1,8 @@
+.PHONY: all docker-image
+
+all:
+	@echo "help: run 'make docker-image' to build and push the image"
+
+docker-image:
+	docker build . -f cilium-net-test.Dockerfile -t net-test
+
