@@ -48,23 +48,23 @@
 //config:	No command-line options will be recognized.
 
 /* Needs socket(AF_INET, SOCK_RAW, IPPROTO_ICMP), therefore BB_SUID_MAYBE: */
-//applet:IF_PING(APPLET(ping, BB_DIR_BIN, BB_SUID_MAYBE))
-//applet:IF_PING6(APPLET(ping6, BB_DIR_BIN, BB_SUID_MAYBE))
+//applet:IF_PING(APPLET(xping, BB_DIR_BIN, BB_SUID_MAYBE))
+//applet:IF_PING6(APPLET(xping6, BB_DIR_BIN, BB_SUID_MAYBE))
 
 //kbuild:lib-$(CONFIG_PING)  += ping.o
 //kbuild:lib-$(CONFIG_PING6) += ping.o
 
 //usage:#if !ENABLE_FEATURE_FANCY_PING
-//usage:# define ping_trivial_usage
+//usage:# define xping_trivial_usage
 //usage:       "HOST"
-//usage:# define ping_full_usage "\n\n"
+//usage:# define xping_full_usage "\n\n"
 //usage:       "Send ICMP ECHO_REQUEST packets to network hosts"
-//usage:# define ping6_trivial_usage
+//usage:# define xping6_trivial_usage
 //usage:       "HOST"
-//usage:# define ping6_full_usage "\n\n"
+//usage:# define xping6_full_usage "\n\n"
 //usage:       "Send ICMP ECHO_REQUEST packets to network hosts"
 //usage:#else
-//usage:# define ping_trivial_usage
+//usage:# define xping_trivial_usage
 //usage:       "[OPTIONS] HOST"
 //usage:# define ping_full_usage "\n\n"
 //usage:       "Send ICMP ECHO_REQUEST packets to network hosts\n"
@@ -84,23 +84,26 @@
 //usage:     "\n	-q		Quiet, only display output at start"
 //usage:     "\n			and when finished"
 //usage:     "\n	-p HEXBYTE	Pattern to use for payload"
+//usage:     "\n	-x ID		ICMP id"
 //usage:
-//usage:# define ping6_trivial_usage
+//usage:# define xping6_trivial_usage
 //usage:       "[OPTIONS] HOST"
-//usage:# define ping6_full_usage "\n\n"
+//usage:# define xping6_full_usage "\n\n"
 //usage:       "Send ICMP ECHO_REQUEST packets to network hosts\n"
 //usage:     "\n	-c CNT		Send only CNT pings"
 //usage:     "\n	-s SIZE		Send SIZE data bytes in packets (default 56)"
 //usage:     "\n	-i SECS		Interval"
+//usage:     "\n	-x ID		ICMP id"
 //usage:     "\n	-A		Ping as soon as reply is recevied"
 //usage:     "\n	-I IFACE/IP	Source interface or IP address"
 //usage:     "\n	-q		Quiet, only display output at start"
 //usage:     "\n			and when finished"
 //usage:     "\n	-p HEXBYTE	Pattern to use for payload"
+//usage:     "\n	-x ID		ICMP id"
 //usage:
 //usage:#endif
 //usage:
-//usage:#define ping_example_usage
+//usage:#define xping_example_usage
 //usage:       "$ ping localhost\n"
 //usage:       "PING slag (127.0.0.1): 56 data bytes\n"
 //usage:       "64 bytes from 127.0.0.1: icmp_seq=0 ttl=255 time=20.1 ms\n"
@@ -108,7 +111,7 @@
 //usage:       "--- debian ping statistics ---\n"
 //usage:       "1 packets transmitted, 1 packets received, 0% packet loss\n"
 //usage:       "round-trip min/avg/max = 20.1/20.1/20.1 ms\n"
-//usage:#define ping6_example_usage
+//usage:#define xping6_example_usage
 //usage:       "$ ping6 ip6-localhost\n"
 //usage:       "PING ip6-localhost (::1): 56 data bytes\n"
 //usage:       "64 bytes from ::1: icmp6_seq=0 ttl=64 time=20.1 ms\n"
@@ -955,8 +958,8 @@ static int common_ping_main(int opt, char **argv)
 
 
 #if ENABLE_PING
-int ping_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int ping_main(int argc UNUSED_PARAM, char **argv)
+int xping_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+int xping_main(int argc UNUSED_PARAM, char **argv)
 {
 # if !ENABLE_FEATURE_FANCY_PING
 	return common_ping_main(AF_UNSPEC, argv);
@@ -967,8 +970,8 @@ int ping_main(int argc UNUSED_PARAM, char **argv)
 #endif
 
 #if ENABLE_PING6
-int ping6_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int ping6_main(int argc UNUSED_PARAM, char **argv)
+int xping6_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+int xping6_main(int argc UNUSED_PARAM, char **argv)
 {
 # if !ENABLE_FEATURE_FANCY_PING
 	return common_ping_main(AF_INET6, argv);
